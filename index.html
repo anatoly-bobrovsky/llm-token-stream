@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>AI Bot</h1>
+        <form action="" onsubmit="connect(event)">
+            <input type="text" id="websocketUrl" autocomplete="off"/>
+            <button>Connect</button>
+        </form>
+        <form action="" onsubmit="sendMessage(event)">
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <ul id='botMessages'>
+        </ul>
+        <script>
+            var ws;
+            var content;
+
+            function connect(event) {{
+                var websocketUrl = document.getElementById("websocketUrl");
+                ws = new WebSocket(websocketUrl.value);
+
+                ws.onopen = function() {{
+                    alert('Websocket connection established!');
+                }};
+
+                ws.onmessage = function(event) {{
+                    var messages = document.getElementById('botMessages');
+                    if (event.data == '|') {
+                        var message = document.createElement('li');
+
+                        var content = document.createTextNode('BOT: ');
+                        message.appendChild(content);
+
+                        messages.appendChild(message);
+                    } else {
+                        message = messages.lastChild
+
+                        var content = document.createTextNode(event.data);
+                        message.appendChild(content);
+                        
+                    }
+
+                }};
+
+                ws.onclose = function(e) {{
+                    console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+                    setTimeout(function() {{
+                        connect();
+                    }}, 1000);
+                }};
+
+                ws.onerror = function(err) {{
+                    console.error('Socket encountered error: ', err.message, 'Closing socket');
+                    ws.close();
+                }};
+                event.preventDefault();
+            }}
+
+            function sendMessage(event) {{
+                var input = document.getElementById("messageText");
+                ws.send(input.value);
+
+                input.value = '';
+                event.preventDefault();
+            }}
+
+        </script>
+    </body>
+</html>
