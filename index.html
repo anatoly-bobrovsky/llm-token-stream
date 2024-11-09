@@ -17,7 +17,6 @@
         </ul>
         <script>
             var ws;
-            var content;
 
             function connect(event) {{
                 var websocketUrl = document.getElementById("websocketUrl");
@@ -28,29 +27,23 @@
                 }};
 
                 ws.onmessage = function(event) {{
-                    var messages = document.getElementById('botMessages');
-                    if (event.data == '|') {
-                        var message = document.createElement('li');
+                    const msg = JSON.parse(event.data);
 
-                        var content = document.createTextNode('BOT: ');
-                        message.appendChild(content);
+                    var messages = document.getElementById('botMessages');
+                    if (msg.text == '' && msg.id == messages.childElementCount) {
+                        var message = document.createElement('li');
+                        message.innerHTML = 'BOT: '
 
                         messages.appendChild(message);
                     } else {
-                        message = messages.lastChild
-
-                        var content = document.createTextNode(event.data);
-                        message.appendChild(content);
-                        
+                        message = messages.childNodes[msg.id + 1];
+                        message.innerHTML += msg.text
                     }
 
                 }};
 
                 ws.onclose = function(e) {{
-                    console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-                    setTimeout(function() {{
-                        connect();
-                    }}, 1000);
+                    console.log('Socket is closed:', e.reason);
                 }};
 
                 ws.onerror = function(err) {{
@@ -62,7 +55,13 @@
 
             function sendMessage(event) {{
                 var input = document.getElementById("messageText");
-                ws.send(input.value);
+                var messages = document.getElementById('botMessages');
+                
+                ws.send(JSON.stringify({
+                    id: messages.childElementCount,
+                    text: input.value
+                }));
+
 
                 input.value = '';
                 event.preventDefault();

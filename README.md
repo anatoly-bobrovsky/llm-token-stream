@@ -61,20 +61,18 @@ You can use [Postman](https://www.postman.com/) or any WebSocket client to conne
 ├── index.html  # Client interface for WebSocket interaction
 ├── requirements.txt
 └── src
-    ├── env_settings.py          # Manages environment variables
     ├── api_app.py               # Entrypoint for the chatbot app
+    ├── env_settings.py          # Manages environment variables
     └── websocket_chat           # WebSocket Chat Package
         ├── routers.py           # Defines endpoints
+        ├── schemas.py           # Pydantic schemas
         └── bl                   # Business Logic Package
-            ├── data_structures.py  # Custom data structures
-            ├── enums.py
             └── tasks.py         # Task for streaming response chunks from LLM
 ```
 
 ## Possible Improvements
 
 1. Add logging and unit tests.
-2. Replace the custom queue with a message broker, such as RabbitMQ.
-3. Add a unique identifier and memory (checkpointing) for each conversation.
-4. Improve the client interface (index.html) visually.
-5. Refactor with design patterns and introduce new abstractions where applicable.
+2. Add a unique identifier and memory (checkpointing) for each conversation.
+3. Improve the client interface (index.html) visually.
+4. Refactor with design patterns and introduce new abstractions where applicable.
